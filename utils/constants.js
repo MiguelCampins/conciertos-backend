@@ -1,0 +1,2 @@
+
+exports.ONE_WEEK_EXPIRATION = 60*60*24*7;
