@@ -10,19 +10,13 @@ const constants = require("../utils/constants");
  */
 router.post("/", (req, res) => {
   // primero generamos la contraseña en hash
+  const {password} = req.body.user; 
+
   bcrypt
-    .hash(req.body.password, 10)
+    .hash(password, 10)
     .then((hashedPassword) => {
       // creamos el usuario
-      const newUser = {
-        name: req.body.name,
-        surnames: req.body.surnames,
-        email: req.body.email,
-        phone: req.body.phone,
-        city: req.body.city,
-        password: hashedPassword,
-        userRoleId: req.body.userRoleId,
-      };
+      const newUser = {...req.body.user,password: hashedPassword};
       User.create(newUser)
         .then((createdUser) => {
           // el usuario ha sido creado

@@ -15,4 +15,14 @@ router.post("/", (req, res) => {
     });
 });
 
+router.get("/", (req, res) => {
+  Roles.find()
+    .then((roles) => {
+      res.json(roles);
+    })
+    .catch((err) => {
+      res.status(500).json({ message: err });
+    });
+});
+
 module.exports = router;
