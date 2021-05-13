@@ -89,6 +89,7 @@ router.put("/:userId", (req, res) => {
       res.status(500).json({ message: err });
     });
 });
+
 /**
  * Login con jwt
  */
