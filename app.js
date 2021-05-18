@@ -20,7 +20,7 @@ app.use("/role", roleRoutes);
 app.use("/concert", concertRoutes);
 app.use("/sale", saleRoutes);
 
-mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+mongoose.connect(process.env.DB_CONNECTION, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
     if(err) {
       console.warn('Error connecting to database');
       throw new Error(JSON.stringify(err));

@@ -16,20 +16,27 @@ router.get("/", (req, res) => {
 })
 
 /**
+ * Show concert by Id
+ */
+
+ router.get("/:concertId", (req, res) => {
+  const _id = req.params.concertId; 
+  Concert.findById(_id, { useFindAndModify: false })
+    .then((concert) => {
+      res.json(concert);
+    })
+    .catch((err) => {
+      res.status(500).json({ message: err });
+    });
+});
+
+
+/**
  * Create concert
  */
 
 router.post("/", (req, res) => {
-  const newConcert = {
-    name: req.body.name,
-    date: req.body.date,
-    city: req.body.city,
-    artists: req.body.artists,
-    maxTickets: req.body.maxTickets,
-    ticketPrice: req.body.ticketPrice,
-    public: req.body.public,
-  };
-
+  const newConcert = {...req.body.concert};
   Concert.create(newConcert)
     .then((concertCreated) => {
       res.json(concertCreated);
@@ -54,5 +61,19 @@ router.put("/:concertId", (req, res) => {
     });
 });
 
+/**
+ *Delete concert 
+ */
+
+router.delete("/:concertId", (req, res) => {
+  const _id = req.params.concertId;
+  Concert.findByIdAndRemove(_id, { useFindAndModify: false })
+    .then((concert) => {
+      res.json(concert);
+    })
+    .catch((err) => {
+      res.status(500).json({ message: err });
+    });
+})
 
 module.exports = router;

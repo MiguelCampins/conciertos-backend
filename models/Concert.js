@@ -5,7 +5,10 @@ const ConcertSchema = mongoose.Schema({
     type: String,
   },
   date: {
-    type: Date,
+    type: String,
+  },
+  hour: {
+    type: String,
   },
   city: {
     type: String,
@@ -21,6 +24,9 @@ const ConcertSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  imageUrl: {
+    type: String,
+  }
 });
 
 module.exports = mongoose.model("Concert", ConcertSchema);

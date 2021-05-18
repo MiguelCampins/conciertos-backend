@@ -6,9 +6,36 @@ const jwt = require("jsonwebtoken");
 const constants = require("../utils/constants");
 
 /**
- * Signup user
+ * Crear usuario
  */
 router.post("/", (req, res) => {
+  // primero generamos la contraseña en hash
+  const {password} = req.body.user; 
+
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => {
+      // creamos el usuario
+      const newUser = {...req.body.user,password: hashedPassword};
+      User.create(newUser)
+        .then((createdUser) => {
+          // el usuario ha sido creado
+          res.json(createdUser);
+        })
+        .catch((err) => {
+          res.status(500).json({ message: err });
+        });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: err });
+    });
+});
+
+/**
+ *Registrar usuario 
+ */
+
+ router.post("/register", (req, res) => {
   // primero generamos la contraseña en hash
   const {password} = req.body.user; 
 
