@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Concert = require("../models/Concert");
+const Sale = require('../models/Sale');
 
 /**
  * Show concerts
@@ -24,6 +25,33 @@ router.get("/", (req, res) => {
   Concert.findById(_id, { useFindAndModify: false })
     .then((concert) => {
       res.json(concert);
+    })
+    .catch((err) => {
+      res.status(500).json({ message: err });
+    });
+});
+
+/**
+ * Get the remaining tickets
+ */
+
+ router.get("/remainingTickets/:concertId", (req, res) => {
+  const _id = req.params.concertId; 
+  Concert.findById(_id, { useFindAndModify: false })
+    .then((concert) => {
+      // encuentro las ventas de ese concierto
+      Sale.find({ concertId: _id })
+        .then((foundSales) => {
+          let ticketsRemaining = concert?.maxTickets;
+          // por cada venta, le resto la cantidad vendidas de esa venta al máximo de tickets
+          foundSales.forEach((sale) => {
+            ticketsRemaining = ticketsRemaining - sale.quantity;
+          });
+          res.json(ticketsRemaining);
+        })
+        .catch((err) => {
+          res.status(500).json({ message: err });
+        });
     })
     .catch((err) => {
       res.status(500).json({ message: err });
