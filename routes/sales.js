@@ -30,4 +30,23 @@ router.get("/", (req,res) => {
     });
 });
 
+/**
+ * mostrar ventas de cada usuario
+ */
+ router.post("/filter", (req,res) => {
+  const {userId} = req.body;
+
+  const params = {};
+  if(userId){
+    params.userId = userId;
+  }
+    Sale.find(params)
+    .then((filteredSale) => {
+      res.json(filteredSale)
+    })
+    .catch((err) => {
+      res.status(500).json({ message: err });
+    });
+    })
+
 module.exports = router;

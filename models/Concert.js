@@ -26,7 +26,8 @@ const ConcertSchema = mongoose.Schema({
   },
   imageUrl: {
     type: String,
-  }
+  },
+  images:[{ type: String }],
 });
 
 module.exports = mongoose.model("Concert", ConcertSchema);
