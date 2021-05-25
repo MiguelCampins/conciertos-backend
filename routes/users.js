@@ -50,7 +50,9 @@ router.post("/", (req, res) => {
           res.json(createdUser);
         })
         .catch((err) => {
-          res.status(500).json({ message: err });
+          //Guardamos el mensaje de error como objeto para despues acceder a las propiedades del error
+          const {message} = err;
+          res.status(500).json({ message });
         });
     })
     .catch((err) => {
