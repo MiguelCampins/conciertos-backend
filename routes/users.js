@@ -115,7 +115,8 @@ router.put("/:userId", (req, res) => {
       res.json(updateUser);
     })
     .catch((err) => {
-      res.status(500).json({ message: err });
+      const {message} = err;
+      res.status(500).json({ message });
     });
 });
 
