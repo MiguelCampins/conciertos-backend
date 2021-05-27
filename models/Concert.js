@@ -20,7 +20,7 @@ const ConcertSchema = mongoose.Schema({
   ticketPrice: {
     type: Number,
   },
-  public: {
+  published: {
     type: Boolean,
     default: false,
   },

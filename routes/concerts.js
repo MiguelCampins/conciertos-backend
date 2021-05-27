@@ -16,6 +16,20 @@ router.get("/", (req, res) => {
     });
 })
 
+router.get("/filter", (req, res) => {
+  const params = {};
+  if(req.query.published){
+    params.published = req.query.published === 'true';
+  }
+    Concert.find(params)
+    .then((concerts) => {
+      res.json(concerts);
+    })
+    .catch((err) => {
+      res.status(500).json({ message: err });
+    });
+})
+
 /**
  * Show concert by Id
  */
