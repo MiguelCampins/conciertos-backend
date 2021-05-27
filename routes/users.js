@@ -10,13 +10,13 @@ const constants = require("../utils/constants");
  */
 router.post("/", (req, res) => {
   // primero generamos la contraseña en hash
-  const {password} = req.body.user; 
+  const { password } = req.body.user;
 
   bcrypt
     .hash(password, 10)
     .then((hashedPassword) => {
       // creamos el usuario
-      const newUser = {...req.body.user,password: hashedPassword};
+      const newUser = { ...req.body.user, password: hashedPassword };
       User.create(newUser)
         .then((createdUser) => {
           // el usuario ha sido creado
@@ -32,18 +32,18 @@ router.post("/", (req, res) => {
 });
 
 /**
- *Registrar usuario 
+ *Registrar usuario
  */
 
- router.post("/register", (req, res) => {
+router.post("/register", (req, res) => {
   // primero generamos la contraseña en hash
-  const {password} = req.body.user; 
+  const { password } = req.body.user;
 
   bcrypt
     .hash(password, 10)
     .then((hashedPassword) => {
       // creamos el usuario
-      const newUser = {...req.body.user,password: hashedPassword};
+      const newUser = { ...req.body.user, password: hashedPassword };
       User.create(newUser)
         .then((createdUser) => {
           // el usuario ha sido creado
@@ -51,7 +51,7 @@ router.post("/", (req, res) => {
         })
         .catch((err) => {
           //Guardamos el mensaje de error como objeto para despues acceder a las propiedades del error
-          const {message} = err;
+          const { message } = err;
           res.status(500).json({ message });
         });
     })
@@ -78,8 +78,8 @@ router.get("/", (req, res) => {
  * Show user by id
  */
 
- router.get("/:userId", (req, res) => {
-  const _id = req.params.userId; 
+router.get("/:userId", (req, res) => {
+  const _id = req.params.userId;
   User.findById(_id, { useFindAndModify: false })
     .then((user) => {
       res.json(user);
@@ -108,15 +108,23 @@ router.delete("/:userId", (req, res) => {
  * Update user
  */
 router.put("/:userId", (req, res) => {
-  const _id = req.params.userId;
-  const user = req.body;
-  User.findByIdAndUpdate(_id, user, { new: true, useFindAndModify: false })
-    .then((updateUser) => {
-      res.json(updateUser);
+  const {password}  = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => {
+      const _id = req.params.userId;
+      const user = { ...req.body, password: hashedPassword };
+      User.findByIdAndUpdate(_id, user, { new: true, useFindAndModify: false })
+        .then((updateUser) => {
+          res.json(updateUser);
+        })
+        .catch((err) => {
+          const { message } = err;
+          res.status(500).json({ message });
+        });
     })
     .catch((err) => {
-      const {message} = err;
-      res.status(500).json({ message });
+      res.status(500).json({ message: err });
     });
 });
 
@@ -127,7 +135,8 @@ router.post("/login", (req, res) => {
   // miramos los parámetros
   if (req.body.email && req.body.password) {
     // buscamos si el usuario existe
-    User.findOne({ email: req.body.email }).populate('userRoleId')
+    User.findOne({ email: req.body.email })
+      .populate("userRoleId")
       .then((foundUser) => {
         if (foundUser) {
           // comparamos el password enviado y el de la base de datos
@@ -178,10 +187,9 @@ router.post("/autoLogin", (req, res) => {
         //Decodificamos el token para descifrar el usuario
         jwt.verify(token, process.env.SECRET, (err, user) => {
           // si hay un error lo devolvemos
-          if(err) {
+          if (err) {
             res.status(500).json({ message: err });
-          }
-          else if (user && user._id === userId) {
+          } else if (user && user._id === userId) {
             //Si coninciden los id mandamos un ok
             res.json({ message: "ok" });
           } else {
