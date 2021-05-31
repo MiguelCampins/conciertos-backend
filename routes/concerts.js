@@ -8,6 +8,7 @@ const Sale = require('../models/Sale');
  */
 router.get("/", (req, res) => {
   Concert.find()
+    .sort("date")
     .then((concerts) => {
       res.json(concerts);
     })

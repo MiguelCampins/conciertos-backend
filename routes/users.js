@@ -66,6 +66,7 @@ router.post("/register", (req, res) => {
 
 router.get("/", (req, res) => {
   User.find()
+  .sort("name")
     .then((users) => {
       res.json(users);
     })
@@ -107,13 +108,10 @@ router.delete("/:userId", (req, res) => {
 /**
  * Update user
  */
-router.put("/:userId", (req, res) => {
-  const {password}  = req.body;
-  bcrypt
-    .hash(password, 10)
-    .then((hashedPassword) => {
+
+ router.put("/:userId", (req, res) => {
       const _id = req.params.userId;
-      const user = { ...req.body, password: hashedPassword };
+      const user = req.body;
       User.findByIdAndUpdate(_id, user, { new: true, useFindAndModify: false })
         .then((updateUser) => {
           res.json(updateUser);
@@ -122,11 +120,29 @@ router.put("/:userId", (req, res) => {
           const { message } = err;
           res.status(500).json({ message });
         });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
 });
+
+// router.put("/:userId", (req, res) => {
+//   const {password}  = req.body;
+//   bcrypt
+//     .hash(password, 10)
+//     .then((hashedPassword) => {
+//       const _id = req.params.userId;
+//       const user = { ...req.body, password: hashedPassword };
+//       User.findByIdAndUpdate(_id, user, { new: true, useFindAndModify: false })
+//         .then((updateUser) => {
+//           res.json(updateUser);
+//         })
+//         .catch((err) => {
+//           const { message } = err;
+//           res.status(500).json({ message });
+//         });
+//     })
+//     .catch((err) => {
+//       const { message } = err;
+//       res.status(500).json({ message });
+//     });
+// });
 
 /**
  * Login con jwt
