@@ -66,7 +66,7 @@ router.post("/register", (req, res) => {
 
 router.get("/", (req, res) => {
   User.find()
-  .sort("name")
+    .sort("name")
     .then((users) => {
       res.json(users);
     })
@@ -109,17 +109,72 @@ router.delete("/:userId", (req, res) => {
  * Update user
  */
 
- router.put("/:userId", (req, res) => {
-      const _id = req.params.userId;
-      const user = req.body;
-      User.findByIdAndUpdate(_id, user, { new: true, useFindAndModify: false })
-        .then((updateUser) => {
-          res.json(updateUser);
-        })
-        .catch((err) => {
-          const { message } = err;
-          res.status(500).json({ message });
-        });
+router.put("/:userId", (req, res) => {
+  const _id = req.params.userId;
+  const user = req.body;
+  User.findByIdAndUpdate(_id, user, { new: true, useFindAndModify: false })
+    .then((updateUser) => {
+      res.json(updateUser);
+    })
+    .catch((err) => {
+      const { message } = err;
+      res.status(500).json({ message });
+    });
+});
+
+/**
+ * Update password
+ */
+
+router.post("/changePassword", (req, res) => {
+  //  const {_id} = req.body;
+  //  const {password} = req.body;
+  //  const {newPassword} = req.body;
+
+  const { _id, password, newPassword } = req.body;
+
+  User.findById(_id)
+    .then((foundUser) => {
+      if (foundUser) {
+        bcrypt
+          .compare(password, foundUser.password)
+          .then((same) => {
+            if (!same) {
+              throw new Error("Invalid params");
+            }
+            bcrypt
+              .hash(newPassword, 10)
+              .then((hashedPassword) => {
+                User.findByIdAndUpdate(
+                  _id,
+                  { password: hashedPassword },
+                  { new: true, useFindAndModify: false }
+                )
+                  .then((userUpdated) => {
+                    res.json(userUpdated);
+                  })
+                  .catch((err) => {
+                    const { message } = err;
+                    res.status(500).json({ message });
+                  });
+              })
+              .catch((err) => {
+                const { message } = err;
+                res.status(500).json({ message });
+              });
+          })
+          .catch((err) => {
+            const { message } = err;
+            res.status(500).json({ message });
+          });
+      } else {
+        res.status(500).json({ message: "User not found!" });
+      }
+    })
+    .catch((err) => {
+      const { message } = err;
+      res.status(500).json({ message });
+    });
 });
 
 // router.put("/:userId", (req, res) => {
