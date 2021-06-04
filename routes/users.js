@@ -127,77 +127,78 @@ router.put("/:userId", (req, res) => {
  */
 
 router.post("/changePassword", (req, res) => {
-  //  const {_id} = req.body;
-  //  const {password} = req.body;
-  //  const {newPassword} = req.body;
 
   const { _id, password, newPassword } = req.body;
 
   User.findById(_id)
     .then((foundUser) => {
-      if (foundUser) {
-        bcrypt
-          .compare(password, foundUser.password)
-          .then((same) => {
-            if (!same) {
-              throw new Error("Invalid params");
-            }
-            bcrypt
-              .hash(newPassword, 10)
-              .then((hashedPassword) => {
-                User.findByIdAndUpdate(
-                  _id,
-                  { password: hashedPassword },
-                  { new: true, useFindAndModify: false }
-                )
-                  .then((userUpdated) => {
-                    res.json(userUpdated);
-                  })
-                  .catch((err) => {
-                    const { message } = err;
-                    res.status(500).json({ message });
-                  });
-              })
-              .catch((err) => {
-                const { message } = err;
-                res.status(500).json({ message });
-              });
-          })
-          .catch((err) => {
-            const { message } = err;
-            res.status(500).json({ message });
-          });
-      } else {
-        res.status(500).json({ message: "User not found!" });
+      if (!foundUser) {
+        throw new Error("User not found");
       }
+      return bcrypt.compare(password, foundUser.password);
+    })
+    .then((same) => {
+      if (!same) {
+        throw new Error("Invalid params");
+      }
+      return bcrypt.hash(newPassword, 10);
+    })
+    .then((hashedPassword) => {
+      return User.findByIdAndUpdate(
+        _id,
+        { password: hashedPassword },
+        { new: true, useFindAndModify: false }
+      );
+    })
+    .then((updateUser) => {
+      return res.json(updateUser);
     })
     .catch((err) => {
+      //Guardamos el mensaje de error como objeto para despues acceder a las propiedades del error
       const { message } = err;
+      console.error(message);
       res.status(500).json({ message });
     });
 });
 
-// router.put("/:userId", (req, res) => {
-//   const {password}  = req.body;
-//   bcrypt
-//     .hash(password, 10)
-//     .then((hashedPassword) => {
-//       const _id = req.params.userId;
-//       const user = { ...req.body, password: hashedPassword };
-//       User.findByIdAndUpdate(_id, user, { new: true, useFindAndModify: false })
-//         .then((updateUser) => {
-//           res.json(updateUser);
+// return bcrypt.compare(password, foundUser.password)
+//         .then((same) => {
+//           if (!same) {
+//             throw new Error("Invalid params");
+//           }
+//           bcrypt
+//             .hash(newPassword, 10)
+//             .then((hashedPassword) => {
+//               User.findByIdAndUpdate(
+//                 _id,
+//                 { password: hashedPassword },
+//                 { new: true, useFindAndModify: false }
+//               )
+//                 .then((userUpdated) => {
+//                   res.json(userUpdated);
+//                 })
+//                 .catch((err) => {
+//                   const { message } = err;
+//                   res.status(500).json({ message });
+//                 });
+//             })
+//             .catch((err) => {
+//               const { message } = err;
+//               res.status(500).json({ message });
+//             });
 //         })
 //         .catch((err) => {
 //           const { message } = err;
 //           res.status(500).json({ message });
 //         });
-//     })
-//     .catch((err) => {
-//       const { message } = err;
-//       res.status(500).json({ message });
-//     });
-// });
+//     } else {
+//       res.status(500).json({ message: "User not found!" });
+//     }
+//   })
+//   .catch((err) => {
+//     const { message } = err;
+//     res.status(500).json({ message });
+//   });
 
 /**
  * Login con jwt
