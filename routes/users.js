@@ -161,45 +161,6 @@ router.post("/changePassword", (req, res) => {
     });
 });
 
-// return bcrypt.compare(password, foundUser.password)
-//         .then((same) => {
-//           if (!same) {
-//             throw new Error("Invalid params");
-//           }
-//           bcrypt
-//             .hash(newPassword, 10)
-//             .then((hashedPassword) => {
-//               User.findByIdAndUpdate(
-//                 _id,
-//                 { password: hashedPassword },
-//                 { new: true, useFindAndModify: false }
-//               )
-//                 .then((userUpdated) => {
-//                   res.json(userUpdated);
-//                 })
-//                 .catch((err) => {
-//                   const { message } = err;
-//                   res.status(500).json({ message });
-//                 });
-//             })
-//             .catch((err) => {
-//               const { message } = err;
-//               res.status(500).json({ message });
-//             });
-//         })
-//         .catch((err) => {
-//           const { message } = err;
-//           res.status(500).json({ message });
-//         });
-//     } else {
-//       res.status(500).json({ message: "User not found!" });
-//     }
-//   })
-//   .catch((err) => {
-//     const { message } = err;
-//     res.status(500).json({ message });
-//   });
-
 /**
  * Login con jwt
  */
