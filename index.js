@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
-require("dotenv/config");
+require('dotenv').config();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -13,6 +13,7 @@ const concertRoutes = require("./routes/concerts");
 const saleRoutes = require("./routes/sales");
 
 app.use(cors());
+app.use( express.static('public') );
 
 app.use("/user", userRoutes);
 app.use("/role", roleRoutes);
