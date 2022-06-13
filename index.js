@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 require('dotenv').config();
-const path = require('path');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -14,10 +13,8 @@ const concertRoutes = require("./routes/concerts");
 const saleRoutes = require("./routes/sales");
 
 app.use(cors());
-app.use( express.static(path.join(__dirname, 'public')));
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+app.use( express.static('public') );
+
 
 app.use("/user", userRoutes);
 app.use("/role", roleRoutes);
